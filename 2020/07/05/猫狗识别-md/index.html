@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>猫狗识别 | Ge-葛泽坤</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="数据预处理：图像数据处理，准备训练和验证数据集卷积网络模型：构建网络架构过拟合问题：观察训练和验证效果，针对过拟合问题提出解决方法数据增强：图像数据增强方法与效果迁移学习：深度学习必备训练策略  导入工具包import osimport warningswarnings.filterwarnings(“ignore”)import tensorflow as tffrom tensorflow.k">
+<meta property="og:type" content="article">
+<meta property="og:title" content="猫狗识别">
+<meta property="og:url" content="http://yoursite.com/2020/07/05/%E7%8C%AB%E7%8B%97%E8%AF%86%E5%88%AB-md/index.html">
+<meta property="og:site_name" content="Ge-葛泽坤">
+<meta property="og:description" content="数据预处理：图像数据处理，准备训练和验证数据集卷积网络模型：构建网络架构过拟合问题：观察训练和验证效果，针对过拟合问题提出解决方法数据增强：图像数据增强方法与效果迁移学习：深度学习必备训练策略  导入工具包import osimport warningswarnings.filterwarnings(“ignore”)import tensorflow as tffrom tensorflow.k">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-07-05T10:21:02.000Z">
+<meta property="article:modified_time" content="2020-07-06T13:00:47.029Z">
+<meta property="article:author" content="Ge-葛泽坤">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Ge-葛泽坤" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 4.2.1"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Ge-葛泽坤</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-猫狗识别-md" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/07/05/%E7%8C%AB%E7%8B%97%E8%AF%86%E5%88%AB-md/" class="article-date">
+  <time datetime="2020-07-05T10:21:02.000Z" itemprop="datePublished">2020-07-05</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      猫狗识别
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>数据预处理：图像数据处理，准备训练和验证数据集<br>卷积网络模型：构建网络架构<br>过拟合问题：观察训练和验证效果，针对过拟合问题提出解决方法<br>数据增强：图像数据增强方法与效果<br>迁移学习：深度学习必备训练策略</p>
+<hr>
+<h1 id="导入工具包"><a href="#导入工具包" class="headerlink" title="导入工具包"></a>导入工具包</h1><p>import os<br>import warnings<br>warnings.filterwarnings(“ignore”)<br>import tensorflow as tf<br>from tensorflow.keras.optimizers import Adam<br>from tensorflow.keras.preprocessing.image import ImageDataGenerator</p>
+<hr>
+<h1 id="指定好数据路径（训练和验证）"><a href="#指定好数据路径（训练和验证）" class="headerlink" title="指定好数据路径（训练和验证）"></a>指定好数据路径（训练和验证）</h1><h2 id="数据所在文件夹"><a href="#数据所在文件夹" class="headerlink" title="数据所在文件夹"></a>数据所在文件夹</h2><p>base_dir = ‘./data/cats_and_dogs’<br>train_dir = os.path.join(base_dir, ‘train’)<br>validation_dir = os.path.join(base_dir, ‘validation’)</p>
+<h2 id="训练集"><a href="#训练集" class="headerlink" title="训练集"></a>训练集</h2><p>train_cats_dir = os.path.join(train_dir, ‘cats’)<br>train_dogs_dir = os.path.join(train_dir, ‘dogs’)</p>
+<h2 id="验证集"><a href="#验证集" class="headerlink" title="验证集"></a>验证集</h2><p>validation_cats_dir = os.path.join(validation_dir, ‘cats’)<br>validation_dogs_dir = os.path.join(validation_dir, ‘dogs’)</p>
+<hr>
+<h1 id="构建卷积神经网络模型"><a href="#构建卷积神经网络模型" class="headerlink" title="构建卷积神经网络模型"></a>构建卷积神经网络模型</h1><p>几层都可以，大家可以随意玩<br>如果用CPU训练，可以把输入设置的更小一些，一般输入大小更主要的决定了训练速度</p>
+<p>model = tf.keras.models.Sequential([<br>&emsp;&emsp;<em>#如果训练慢，可以把数据设置的更小一些</em><br>&emsp;&emsp;tf.keras.layers.Conv2D(32, (3,3), activation=’relu’, input_shape=(64, 64, 3)),<br>&emsp;&emsp;tf.keras.layers.MaxPooling2D(2, 2),</p>
+<p>&emsp;&emsp;tf.keras.layers.Conv2D(64, (3,3), activation=’relu’),<br>&emsp;&emsp;tf.keras.layers.MaxPooling2D(2,2),</p>
+<p>&emsp;&emsp;tf.keras.layers.Conv2D(128, (3,3), activation=’relu’),<br>&emsp;&emsp;tf.keras.layers.MaxPooling2D(2,2),</p>
+<p>&emsp;&emsp;<em>#为全连接层准备</em><br>&emsp;&emsp;f.keras.layers.Flatten(),</p>
+<p>&emsp;&emsp;tf.keras.layers.Dense(512, activation=’relu’),<br>&emsp;&emsp;# 二分类sigmoid就够了<br>&emsp;&emsp;tf.keras.layers.Dense(1, activation=’sigmoid’)<br>])<br>model.summary()</p>
+<h1 id="配置训练器"><a href="#配置训练器" class="headerlink" title="配置训练器"></a>配置训练器</h1><p>model.compile(loss=’binary_crossentropy’,<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;optimizer=Adam(lr=1e-4),<br>&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;metrics=[‘acc’])</p>
+<hr>
+<h2 id="数据处理"><a href="#数据处理" class="headerlink" title="数据处理"></a>数据处理</h2><p>读进来的数据会被自动转换成tensor(float32)格式，分别准备训练和验证<br>图像数据归一化（0-1）区间</p>
+<p>train_datagen = ImageDataGenerator(rescale=1./255)<br>test_datagen = ImageDataGenerator(rescale=1./255)<br>train_generator = train_datagen.flow_from_directory(<br>&emsp;&emsp;train_dir,  # 文件夹路径<br>&emsp;&emsp;target_size=(64, 64),  # 指定resize成的大小<br>&emsp;&emsp;batch_size=20,<br>&emsp;&emsp;<em># 如果one-hot就是categorical，二分类用binary就可以</em><br>&emsp;&emsp;class_mode=’binary’)</p>
+<p>validation_generator = test_datagen.flow_from_directory(<br>&emsp;&emsp;validation_dir,<br>&emsp;&emsp;target_size=(64, 64),<br>&emsp;&emsp;batch_size=20,<br>&emsp;&emsp;class_mode=’binary’)</p>
+<hr>
+<h2 id="训练网络模型"><a href="#训练网络模型" class="headerlink" title="训练网络模型"></a>训练网络模型</h2><p>直接fit也可以，但是通常咱们不能把所有数据全部放入内存，fit_generator相当于一个生成器，动态产生所需的batch数据<br>steps_per_epoch相当给定一个停止条件，因为生成器会不断产生batch数据，说白了就是它不知道一个epoch里需要执行多少个step</p>
+<p>history = model.fit_generator(<br>&emsp;&emsp;train_generator,<br>&emsp;&emsp;steps_per_epoch=100,  # 2000 images = batch_size * steps<br>&emsp;&emsp;epochs=20,<br>&emsp;&emsp;validation_data=validation_generator,<br>&emsp;&emsp;validation_steps=50,  # 1000 images = batch_size * steps<br>&emsp;&emsp;verbose=2)</p>
+<hr>
+<h2 id="效果展示"><a href="#效果展示" class="headerlink" title="效果展示"></a>效果展示</h2><p>import matplotlib.pyplot as plt<br>acc = history.history[‘acc’]<br>val_acc = history.history[‘val_acc’]<br>loss = history.history[‘loss’]<br>val_loss = history.history[‘val_loss’]</p>
+<p>epochs = range(len(acc))</p>
+<p>plt.plot(epochs, acc, ‘bo’, label=’Training accuracy’)<br>plt.plot(epochs, val_acc, ‘b’, label=’Validation accuracy’)<br>plt.title(‘Training and validation accuracy’)</p>
+<p>plt.figure()</p>
+<p>plt.plot(epochs, loss, ‘bo’, label=’Training Loss’)<br>plt.plot(epochs, val_loss, ‘b’, label=’Validation Loss’)<br>plt.title(‘Training and validation loss’)<br>plt.legend()</p>
+<p>plt.show()</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2020/07/05/%E7%8C%AB%E7%8B%97%E8%AF%86%E5%88%AB-md/" data-id="ckcaij3eb0000ecnn0k0cewc8" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2020/07/06/hello-world/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Hello World
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/07/03/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0-md/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">学习笔记|《python编程：从入门到实践》</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/07/06/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/05/%E7%8C%AB%E7%8B%97%E8%AF%86%E5%88%AB-md/">猫狗识别</a>
+          </li>
+        
+          <li>
+            <a href="/2020/07/03/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%96%87%E7%AB%A0-md/">学习笔记|《python编程：从入门到实践》</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 Ge-葛泽坤<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
